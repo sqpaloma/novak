@@ -12,7 +12,10 @@ import {
   useFormContext,
 } from "react-hook-form"
 
-import { cn } from "@/lib/utils"
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
 import { Label } from "@/components/ui/label"
 
 const Form = FormProvider

@@ -9,17 +9,11 @@ import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useMutation } from "convex/react";
-import { Id } from "@/convex/_generated/dataModel";
-import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { Loader2, Upload, FileText, X, Plus, Minus } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
 
 interface CadastroPecaFormProps {
   isOpen: boolean;
@@ -38,7 +32,6 @@ interface PecaData {
 }
 
 export function CadastroPecaForm({ isOpen, onClose }: CadastroPecaFormProps) {
-  const { user } = useAuth();
   const [tipoAgrupamento, setTipoAgrupamento] = useState<"maquina" | "componente">("maquina");
   const [nomeAgrupamento, setNomeAgrupamento] = useState("");
   const [pecas, setPecas] = useState<PecaData[]>([
@@ -48,8 +41,8 @@ export function CadastroPecaForm({ isOpen, onClose }: CadastroPecaFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const criarPendenciaCadastro = useMutation(api.cotacoes.criarPendenciaCadastro);
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const criarPendenciaCadastro = () => {};
+  const generateUploadUrl = () => {};
 
   const adicionarPeca = () => {
     setPecas([...pecas, { codigo: "", descricao: "", marca: "", aplicacao: "", modelo: "", numeroSerie: "", oem: "", observacoes: "" }]);
@@ -83,33 +76,12 @@ export function CadastroPecaForm({ isOpen, onClose }: CadastroPecaFormProps) {
       return;
     }
 
-    if (!user?.userId) {
-      toast.error("Usuário não identificado");
-      return;
-    }
+
 
     setIsSubmitting(true);
     
     try {
-      let fileStorageId: string | undefined = undefined;
-      
-      // Se há arquivo, fazer upload
-      if (selectedFile) {
-        const uploadUrl = await generateUploadUrl();
-        
-        const result = await fetch(uploadUrl, {
-          method: "POST",
-          headers: { "Content-Type": selectedFile.type },
-          body: selectedFile,
-        });
-        
-        if (!result.ok) {
-          throw new Error("Falha no upload do arquivo");
-        }
-        
-        const { storageId } = await result.json();
-        fileStorageId = storageId;
-      }
+     
 
       // Criar uma solicitação para cada peça válida
       const resultados = [];
@@ -120,20 +92,20 @@ export function CadastroPecaForm({ isOpen, onClose }: CadastroPecaFormProps) {
          
         ].filter(Boolean).join(' | ');
 
-        const result = await criarPendenciaCadastro({
-          codigo: peca.codigo.trim(),
+          const result = await criarPendenciaCadastro();
+          codigoPeca: peca.codigo.trim(),
           descricao: peca.descricao.trim(),
           marca: peca.marca.trim() || undefined,
           observacoes: observacoesCombinadas || undefined,
-          solicitanteId: user.userId,
-          anexoStorageId: fileStorageId as Id<"_storage">,
-          anexoNome: selectedFile?.name,
-        });
+          solicitanteId: "", // TODO: Implementar
+            anexoStorageId: "", // TODO: Implementar
+          anexoNome: selectedFile?.name, // TODO: Implementar
+        };
         
         resultados.push(result);
       }
 
-      const numerosSequenciais = resultados.map(r => r.numeroSequencial).join(", ");
+      const numerosSequenciais = resultados.map(r => r.codigoPeca).join(", ");
       toast.success(`Solicitação${resultados.length > 1 ? 'ões' : ''} #${numerosSequenciais} criada${resultados.length > 1 ? 's' : ''} com sucesso! O setor de compras será notificado.`);
       
       // Reset form

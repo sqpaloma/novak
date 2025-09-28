@@ -1,4 +1,6 @@
-import { cn } from "@/lib/utils"
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 function Skeleton({
   className,

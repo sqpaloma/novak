@@ -11,10 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { X } from "lucide-react";
-import {
-  useUniqueResponsaveis,
-  useDashboardData,
-} from "@/lib/convex-dashboard-client";
 
 interface ResponsavelFilterProps {
   onFilterChange: (responsavel: string | null) => void;
@@ -25,8 +21,8 @@ export function ResponsavelFilter({
   onFilterChange,
   processedItems,
 }: ResponsavelFilterProps) {
-  const uniqueResponsaveisData = useUniqueResponsaveis();
-  const dashboardData = useDashboardData();
+  const uniqueResponsaveisData: any = [];
+  const dashboardData: any = [];
   
   const [responsaveis, setResponsaveis] = useState<string[]>([]);
   const [selectedResponsavel, setSelectedResponsavel] = useState<string | null>(
@@ -47,8 +43,8 @@ export function ResponsavelFilter({
       if (responsaveisFromDB.length > 0) {
         // Filtrar e ordenar responsáveis do banco de dados
         const responsaveisCompletos = responsaveisFromDB
-          .filter(nome => nome && nome.trim() !== "" && nome !== "Não informado")
-          .sort((a, b) => {
+          .filter((nome: any) => nome && nome.trim() !== "" && nome !== "Não informado")
+          .sort((a: any, b: any) => {
             // Colocar gerentes primeiro (se houver lógica específica)
             return a.localeCompare(b);
           });

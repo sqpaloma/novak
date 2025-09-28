@@ -1,19 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Building, FileText, Clock, CheckCircle, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Id } from "@/convex/_generated/dataModel";
 import Image from "next/image";
 
 interface FornecedorData {
-  id: Id<"fornecedores">;
+  id: any;
   nomeEmpresa: string;
   loginUsuario: string;
 }
@@ -39,10 +36,7 @@ export default function FornecedorDashboardPage() {
   }, [router]);
 
   // Buscar cotações do fornecedor
-  const cotacoes = useQuery(
-    api.fornecedores.getCotacoesFornecedor,
-    fornecedorData ? { fornecedorId: fornecedorData.id } : "skip"
-  );
+  const cotacoes: any = [];
 
   const handleLogout = () => {
     localStorage.removeItem("fornecedor");
@@ -92,9 +86,9 @@ export default function FornecedorDashboardPage() {
 
   // Estatísticas das cotações
   const totalCotacoes = cotacoes?.length || 0;
-  const cotacoesPendentes = cotacoes?.filter(c => ["novo", "em_cotacao"].includes(c.status)).length || 0;
-  const cotacoesRespondidas = cotacoes?.filter(c => c.status === "respondida").length || 0;
-  const cotacoesConcluidas = cotacoes?.filter(c => ["comprada"].includes(c.status)).length || 0;
+  const cotacoesPendentes = cotacoes?.filter((c: any) => ["novo", "em_cotacao"].includes(c.status)).length || 0;
+  const cotacoesRespondidas = cotacoes?.filter((c: any) => c.status === "respondida").length || 0;
+  const cotacoesConcluidas = cotacoes?.filter((c: any) => ["comprada"].includes(c.status)).length || 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700">
@@ -204,7 +198,7 @@ export default function FornecedorDashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {cotacoes?.map((cotacao) => (
+                {cotacoes?.map((cotacao: any  ) => (
                   <TableRow key={cotacao._id} className="border-white/20 hover:bg-white/5">
                     <TableCell className="text-white font-medium">
                       #{cotacao.numeroSequencial}

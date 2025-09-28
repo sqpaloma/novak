@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ProcessedItem } from "@/lib/types";
+
 
 interface User {
   name?: string;
@@ -8,7 +8,7 @@ interface User {
 }
 
 interface UseFilteredItemsProps {
-  processedItems: ProcessedItem[];
+  processedItems: any[];
   filteredByResponsavel: string | null;
   shouldForceOwn: boolean;
   user: User | null;

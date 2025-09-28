@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import {
   DndContext,
   DragEndEvent,
@@ -25,7 +23,6 @@ import {
   updateDescriptionForStatus,
   extractInfoFromDescription,
 } from "./todo-utils";
-import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface KanbanMainProps {
@@ -46,45 +43,25 @@ export function KanbanMain({ showNotes = true }: KanbanMainProps) {
     })
   );
 
-  const { user } = useAuth();
-
-  // Query com userId do usuário logado - use "skip" if not logged in
-  const todos = useQuery(
-    api.todos.getTodos, 
-    user?.userId ? { userId: user.userId } : "skip"
-  );
-  const notes = useQuery(
-    api.notes.getNotes, 
-    user?.userId ? { userId: user.userId } : "skip"
-  );
-
-  const createTodo = useMutation(api.todos.createTodo);
-  const updateTodo = useMutation(api.todos.updateTodo);
-  const deleteTodo = useMutation(api.todos.deleteTodo);
-  const createNote = useMutation(api.notes.createNote);
-  const updateNote = useMutation(api.notes.updateNote);
-  const deleteNote = useMutation(api.notes.deleteNote);
-
   // Restrição de visualização: consultores e usuários específicos veem apenas os próprios itens
   const forceOwnByEmail =
-    user?.email?.toLowerCase() === "usuario@empresa.com.br" ||
-    user?.email?.toLowerCase() === "consultor@empresa.com.br";
-  const isConsultor = user?.role === "consultor" && !user?.isAdmin;
+    false;
+  const isConsultor = false;
   const shouldForceOwn = isConsultor || forceOwnByEmail;
-  const userFirstName = (user?.name || "").split(" ")[0]?.toLowerCase() || "";
+  const userFirstName = "";
 
   const visibleTodos = useMemo(() => {
-    const all = todos || [];
-    if (!shouldForceOwn || !userFirstName || !user) return all;
+    const all: any[] = [];
+    if (!shouldForceOwn || !userFirstName) return all;
     return all.filter((t: any) => {
       const { responsible } = extractInfoFromDescription(t.description || "");
       const target = (responsible || "").toString().toLowerCase();
       return target.includes(userFirstName);
     });
-  }, [todos, shouldForceOwn, userFirstName, user]);
+  }, [shouldForceOwn, userFirstName]);
 
   // Se não está logado, não renderizar
-  if (!user || !user.userId) {
+  if (!userFirstName) {
     return <div>Carregando...</div>;
   }
 
@@ -121,12 +98,7 @@ export function KanbanMain({ showNotes = true }: KanbanMainProps) {
       todoData.scheduledDate
     );
 
-    createTodo({
-      title: todoData.title,
-      description: fullDescription || undefined,
-      priority: "medium",
-      userId: user.userId,
-    });
+
   };
 
   const handleUpdateTodo = (todoData: {
@@ -143,16 +115,11 @@ export function KanbanMain({ showNotes = true }: KanbanMainProps) {
       todoData.scheduledDate
     );
 
-    updateTodo({
-      id: editingTodo._id as any,
-      title: todoData.title,
-      description: fullDescription || undefined,
-      userId: user.userId,
-    });
+
   };
 
   const handleStatusChange = async (todoId: string, newStatus: string) => {
-    const currentTodo = todos?.find((todo) => todo._id === todoId);
+    const currentTodo: any = [];
     if (!currentTodo) return;
 
     const { newDescription, isCompleted } = updateDescriptionForStatus(
@@ -160,16 +127,11 @@ export function KanbanMain({ showNotes = true }: KanbanMainProps) {
       newStatus
     );
 
-    await updateTodo({
-      id: todoId as any,
-      description: newDescription || undefined,
-      completed: isCompleted,
-      userId: user.userId,
-    });
+
   };
 
   const handleDeleteTodo = async (todoId: string) => {
-    await deleteTodo({ id: todoId as any, userId: user.userId });
+
   };
 
   const handleEditTodo = (todo: any) => {
@@ -185,28 +147,24 @@ export function KanbanMain({ showNotes = true }: KanbanMainProps) {
   };
 
   const handleCreateNote = (noteData: { title: string; content: string }) => {
-    createNote({ ...noteData, userId: user.userId });
+
   };
 
   const handleUpdateNote = (
     id: string,
     noteData: { title: string; content: string }
   ) => {
-    updateNote({
-      id: id as any,
-      ...noteData,
-      userId: user.userId,
-    });
+
   };
 
   const handleDeleteNote = (id: string) => {
-    deleteNote({ id: id as any, userId: user.userId });
+
   };
 
   const handleClearCompleted = async () => {
     if (confirm("Tem certeza que deseja limpar todas as tarefas concluídas?")) {
       for (const todo of completedTodos) {
-        await deleteTodo({ id: todo._id, userId: user?.userId as any });
+
       }
     }
   };
@@ -242,12 +200,7 @@ export function KanbanMain({ showNotes = true }: KanbanMainProps) {
           overIdStr
         );
 
-        await updateTodo({
-          id: activeTodo._id as any,
-          description: newDescription || undefined,
-          completed: isCompleted,
-          userId: user.userId,
-        });
+
       }
     }
 
@@ -325,7 +278,7 @@ export function KanbanMain({ showNotes = true }: KanbanMainProps) {
       {/* Seção de Notas */}
       {showNotes && (
         <NotesSection
-          notes={notes || []}
+          notes={[]}
           onCreateNote={handleCreateNote}
           onUpdateNote={handleUpdateNote}
           onDeleteNote={handleDeleteNote}

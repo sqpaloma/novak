@@ -4,9 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
-import { useDashboardData } from "@/lib/convex-dashboard-client";
-import { useAuth } from "@/hooks/use-auth";
-import { useAdmin } from "@/hooks/use-admin";
+
 
 interface CalendarItem {
   id: string;
@@ -23,44 +21,32 @@ interface CalendarItem {
 interface DashboardCalendarProps {
   processedItems?: CalendarItem[];
   onDateClick?: (date: string, items: CalendarItem[]) => void;
-  filteredByResponsavel?: string | null;
 }
 
 export function DashboardCalendar({
   processedItems = [],
   onDateClick,
-  filteredByResponsavel,
 }: DashboardCalendarProps) {
-  const { user } = useAuth();
-  const { isAdmin } = useAdmin();
-  const dashboardData = useDashboardData();
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [calendarItems, setCalendarItems] = useState<{
     [key: string]: CalendarItem[];
   }>({});
-  const [databaseItems, setDatabaseItems] = useState<CalendarItem[]>([]);
+  const [databaseItems] = useState<CalendarItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Flag global: consultores (e exceções por email) veem apenas seus próprios itens
-  const forceOwnByEmail =
-    user?.email?.toLowerCase() === "usuario@empresa.com.br" ||
-    user?.email?.toLowerCase() === "consultor@empresa.com.br";
-  const isConsultor = user?.role === "consultor" && !isAdmin;
-  const shouldForceOwn = isAdmin ? false : isConsultor || forceOwnByEmail;
-  const isSpecialManager =
-    user?.email?.toLowerCase() === "gerente@empresa.com.br";
-
+  
   // Carrega dados do banco de dados
   const loadDatabaseItems = async () => {
     setIsLoading(true);
     try {
-      const items = dashboardData?.items || [];
+      const items: any = [];
 
       // Converte os dados do banco para o formato do calendário
       let dbItems: CalendarItem[] = items
-        .filter((item) => item.dataRegistro) // Só inclui itens com dataRegistro
-        .map((item) => ({
+        .filter((item: any) => item.dataRegistro) // Só inclui itens com dataRegistro
+        .map((item: any) => ({
           id: item.os,
           os: item.os,
           titulo: item.titulo || `Item ${item.os}`,
@@ -71,64 +57,12 @@ export function DashboardCalendar({
           data: item.dataRegistro || "",
           rawData: item.rawData || [],
         }));
-
-      // Aplica filtro por consultor logado (quando aplicável)
-      if (shouldForceOwn && user?.name) {
-        const ownFirstName = user.name.split(" ")[0]?.toLowerCase();
-        dbItems = dbItems.filter((item) =>
-          (item.responsavel || "")
-            .toString()
-            .toLowerCase()
-            .includes(ownFirstName)
-        );
-      }
-
-      // Aplica filtro por responsável manual, se ativo e não estiver forçando próprio
-      if (!shouldForceOwn && filteredByResponsavel) {
-        dbItems = dbItems.filter(
-          (item) =>
-            item.responsavel &&
-            item.responsavel.trim() === filteredByResponsavel
-        );
-      }
-
-      // Filtro padrão: sem filtro manual, exibir itens do próprio usuário
-      // EXCEÇÃO: Gerente vê o geral por padrão
-      if (
-        !shouldForceOwn &&
-        !filteredByResponsavel &&
-        user?.name &&
-        !isSpecialManager &&
-        !isAdmin
-      ) {
-        const ownFirstName = user.name.split(" ")[0]?.toLowerCase();
-        dbItems = dbItems.filter((item) =>
-          (item.responsavel || "")
-            .toString()
-            .toLowerCase()
-            .includes(ownFirstName)
-        );
-      }
-
-      setDatabaseItems(dbItems);
     } catch (error) {
+      console.error("Erro ao carregar dados do banco:", error);
     } finally {
       setIsLoading(false);
     }
   };
-
-  // Carrega dados do banco quando o componente monta ou quando o filtro muda
-  useEffect(() => {
-    loadDatabaseItems();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    filteredByResponsavel,
-    shouldForceOwn,
-    user?.name,
-    user?.email,
-    isAdmin,
-    dashboardData,
-  ]);
 
   // Processa os itens para extrair datas de prazo
   useEffect(() => {

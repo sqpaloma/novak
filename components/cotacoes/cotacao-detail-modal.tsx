@@ -9,14 +9,14 @@ import {
 } from "@/components/ui/dialog";
 import { FileText, Loader2 } from "lucide-react";
 import { useCotacao } from "@/hooks/use-cotacoes";
-import { Id } from "@/convex/_generated/dataModel";
+
 
 interface CotacaoDetailModalProps {
-  cotacaoId: Id<"cotacoes">;
+  cotacaoId: any;
   isOpen: boolean;
   onClose: () => void;
   userRole: string;
-  userId?: Id<"users">;
+  userId?: any;
 }
 
 export function CotacaoDetailModal({
@@ -97,7 +97,7 @@ export function CotacaoDetailModal({
                      <div className="p-4 bg-blue-600/70 border border-white/30 rounded-lg">
              <h3 className="font-semibold text-white mb-3">Itens ({cotacao.itens?.length || 0})</h3>
              <div className="space-y-3">
-               {cotacao.itens?.map((item) => (
+               {cotacao.itens?.map((item: any ) => (
                  <div key={item._id} className="border border-white/30 p-4 rounded-lg bg-blue-600/70">
                    <div className="grid grid-cols-3 gap-4">
                      <div>

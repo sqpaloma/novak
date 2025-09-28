@@ -4,7 +4,9 @@ import * as React from "react"
 import { OTPInput, OTPInputContext } from "input-otp"
 import { Dot } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,

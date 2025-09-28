@@ -1,12 +1,7 @@
 import { useMemo } from "react";
-import {
-  DashboardItemLike,
-  extractDeadline,
-  categorizeItem,
-  ItemFilter,
-} from "../app/follow-up/utils";
 
-export function useClientItems(items: DashboardItemLike[], filter: ItemFilter) {
+
+export function useClientItems(items: any[], filter: any) {
   const { onTime, overdue, dueSoon } = useMemo(() => {
     let onTime = 0;
     let overdue = 0;
@@ -16,7 +11,7 @@ export function useClientItems(items: DashboardItemLike[], filter: ItemFilter) {
     const fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
 
     for (const it of items) {
-      const deadline = extractDeadline(it);
+      const deadline = it.deadline;
       if (!deadline || isNaN(deadline.getTime())) {
         onTime++;
         continue;
@@ -36,8 +31,8 @@ export function useClientItems(items: DashboardItemLike[], filter: ItemFilter) {
 
   const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => {
-      const da = extractDeadline(a);
-      const db = extractDeadline(b);
+      const da = a.deadline;
+      const db = b.deadline;
       const ta =
         da && !isNaN(da.getTime()) ? da.getTime() : Number.POSITIVE_INFINITY;
       const tb =
@@ -53,7 +48,7 @@ export function useClientItems(items: DashboardItemLike[], filter: ItemFilter) {
 
   const filteredSortedItems = useMemo(() => {
     let arr = sortedItems;
-    if (filter) return arr.filter((it) => categorizeItem(it) === filter);
+    if (filter) return arr.filter((it) => it.status === filter);
     return arr;
   }, [sortedItems, filter]);
 

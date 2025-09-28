@@ -29,8 +29,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/hooks/use-auth";
-import { useAdmin } from "@/hooks/use-admin";
 
 interface ResponsiveLayoutProps {
   children: React.ReactNode;
@@ -100,8 +98,6 @@ export function ResponsiveLayout({
 }: ResponsiveLayoutProps) {
   const isMobile = useIsMobile();
   const pathname = usePathname();
-  const { signOut } = useAuth();
-  const { isAdmin, user } = useAdmin();
 
   // Treat everything below Tailwind's xl (1280px) as mobile/tablet layout
   const [isNarrowScreen, setIsNarrowScreen] = React.useState(false);
@@ -122,38 +118,16 @@ export function ResponsiveLayout({
     return () => mql.removeEventListener("change", listener);
   }, []);
 
-  const handleLogout = () => {
-    signOut();
-    window.location.href = "/auth";
-  };
 
-  const isConsultor = user?.role === "consultor" && !isAdmin;
-  const isCompras = user?.role === "compras";
 
-  // Function to check if user can access a specific route
-  const canAccessRoute = (route: string) => {
-    if (isAdmin) return true; // Admin can access everything
 
-    switch (user?.role) {
-      case "compras":
-        return ["/cotacoes", "/settings"].includes(route); // Compras can access cotacoes and settings
-      case "consultor":
-        return ["/", "/organize", "/cotacoes", "/follow-up", "/manual", ].includes(route);
-      case "qualidade_pcp":
-      case "gerente":
-      case "diretor":
-        // These roles can access most things
-        return true; // Allow access to all routes including settings
-      default:
-        return false;
-    }
-  };
 
+  
   // Filter menu items based on user role permissions
   const filteredMenuItems = [
-    ...baseMenuItems.filter(item => canAccessRoute(item.href)),
+    ...baseMenuItems,
     // Add indicadores for non-consultor users
-    ...(!isConsultor && canAccessRoute("/indicadores")
+    ...(true
       ? [
           {
             icon: TrendingUp,
@@ -163,7 +137,7 @@ export function ResponsiveLayout({
         ]
       : []),
     // Add settings if user can access it
-    ...(canAccessRoute("/settings")
+    ...(true
       ? [
           {
             icon: Settings,
@@ -230,7 +204,7 @@ export function ResponsiveLayout({
                   {/* Logout button */}
                   <SidebarMenuItem>
                     <SidebarMenuButton
-                      onClick={handleLogout}
+                      // onClick={handleLogout}
                       className="!text-white !hover:bg-white/10"
                     >
                       <LogOut className="h-5 w-5" />

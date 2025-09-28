@@ -1,11 +1,13 @@
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
+>(({ className, ...props }, ref) => ( 
   <div className="relative w-full overflow-auto">
     <table
       ref={ref}

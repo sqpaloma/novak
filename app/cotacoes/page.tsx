@@ -5,15 +5,14 @@ import { ResponsiveLayout } from "@/components/responsive-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Package, Search, Filter, X, ChevronDown } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
 import { CotacoesTable } from "@/components/cotacoes/cotacoes-table";
 import { CotacaoForm } from "@/components/cotacoes/cotacao-form";
 import { CadastroPecaForm } from "@/components/cotacoes/cadastro-peca-form";
 import { CompraDirectaForm } from "@/components/cotacoes/compra-direta-form";
 import { JaCompreiForm } from "@/components/cotacoes/ja-comprei-form";
 
+
 export default function CotacoesPage() {
-  const { user } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [showCadastroForm, setShowCadastroForm] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -36,49 +35,7 @@ export default function CotacoesPage() {
     dataFim: undefined,
   });
 
-  // Verificar se o usuário pode criar cotações (vendedores)
-  const podecriarCotacao = ["consultor", "vendedor", "admin", "gerente","compras","qualidade e pco"].includes(
-    user?.role || ""
-  );
-
-  // Verificar se é da equipe de compras
-  const isCompras = ["admin", "compras", "gerente"].includes(user?.role || "");
-
-  // Verificar se o usuário tem acesso à página
-  const temAcesso = user && [
-    "admin",
-    "consultor",
-    "vendedor",
-    "gerente",
-    "compras",
-    "qualidade e pco",
-    "fornecedor"
-  ].includes(user.role || "");
-
-  if (!temAcesso) {
-    return (
-      <ResponsiveLayout
-        title="Acesso Restrito"
-        subtitle=""
-        fullWidth={true}
-      >
-        <div className="flex flex-col items-center justify-center py-12">
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold text-white mb-4">
-              Acesso Negado
-            </h2>
-            <p className="text-white mb-6">
-              Você não tem permissão para acessar esta página.
-            </p>
-          </div>
-        </div>
-      </ResponsiveLayout>
-    );
-  }
-
-  // Verificar se é fornecedor - eles só veem cotações específicas para eles
-  const isFornecedor = user?.role === "fornecedor";
-
+  
   return (
     <ResponsiveLayout
       title="Cotação de Peças"
@@ -87,12 +44,11 @@ export default function CotacoesPage() {
     >
       <div className="space-y-4 sm:space-y-6">
         {/* Header personalizado com actions - oculto para fornecedores */}
-        {!isFornecedor && (
           <div className="flex flex-col gap-4">
             {/* Botões de ação */}
             <div className="flex flex-row gap-3 justify-end">
               {/* Botão para cadastrar peça - não mostrar para equipe de compras */}
-              {!["compras"].includes(user?.role || "") && (
+              {!["compras"].includes("compras") && (
                 <Button
                   onClick={() => setShowCadastroForm(true)}
                   variant="outline"
@@ -104,7 +60,7 @@ export default function CotacoesPage() {
               )}
 
               {/* Dropdown de Subtarefas - não mostrar para equipe de compras */}
-              {podecriarCotacao && !["compras"].includes(user?.role || "") && (
+              {/* {podecriarCotacao && !["compras"].includes(user?.role || "") && ( */}
                 <div className="relative">
                   <Button
                     onClick={() => setShowSubtarefas(!showSubtarefas)}
@@ -156,10 +112,10 @@ export default function CotacoesPage() {
                     </>
                   )}
                 </div>
-              )}
+              {/* )} */}
 
               {/* Botão para criar nova cotação */}
-              {podecriarCotacao && (
+              {/* {podecriarCotacao && ( */}
                 <Button
                   onClick={() => setShowForm(true)}
                   variant="outline"
@@ -168,10 +124,9 @@ export default function CotacoesPage() {
                   <Plus className="h-4 w-4 mr-2" />
                   Cotação
                 </Button>
-              )}
+              {/* )} */}
             </div>
           </div>
-        )}
 
         {/* Busca e filtros simplificados */}
         <div className="bg-blue-600/70 rounded-lg p-3 sm:p-4 border border-white/30">
@@ -256,7 +211,6 @@ export default function CotacoesPage() {
               </div>
 
               {/* Responsável - ajustado para diferentes perfis */}
-              {(isCompras && !isFornecedor) && (
                 <div className="space-y-2">
                   <label className="text-white text-sm font-medium">Responsável</label>
                   <select
@@ -269,10 +223,8 @@ export default function CotacoesPage() {
                     <option value="comprador">Minhas compras</option>
                   </select>
                 </div>
-              )}
 
               {/* Para outros usuários (exceto fornecedores) - mostrar apenas filtro básico */}
-              {(!isCompras && !isFornecedor && user?.role !== "admin") && (
                 <div className="space-y-2">
                   <label className="text-white text-sm font-medium">Minhas</label>
                   <select
@@ -284,7 +236,6 @@ export default function CotacoesPage() {
                     <option value="solicitante">Minhas solicitações</option>
                   </select>
                 </div>
-              )}
 
               {/* Switch para incluir histórico */}
               <div className="flex items-start space-x-3 bg-blue-600/70 p-3 rounded-md">
@@ -305,9 +256,9 @@ export default function CotacoesPage() {
         {/* Tabela de Cotações */}
         <CotacoesTable
           filtros={filtros}
-          userRole={user?.role || ""}
-          userId={user?.userId}
-          isFornecedor={isFornecedor}
+          userRole={""}
+          userId={""}
+
         />
 
         {/* Modal de Nova Cotação */}
@@ -315,24 +266,16 @@ export default function CotacoesPage() {
           <CotacaoForm
             isOpen={showForm}
             onClose={() => setShowForm(false)}
-            solicitanteId={user?.userId}
           />
         )}
 
-        {/* Modal de Cadastro de Peça */}
-        {showCadastroForm && (
-          <CadastroPecaForm
-            isOpen={showCadastroForm}
-            onClose={() => setShowCadastroForm(false)}
-          />
-        )}
+  
 
         {/* Modal de Compra Direta */}
         {showCompraDirectaForm && (
           <CompraDirectaForm
             isOpen={showCompraDirectaForm}
             onClose={() => setShowCompraDirectaForm(false)}
-            solicitanteId={user?.userId}
           />
         )}
 
@@ -341,7 +284,6 @@ export default function CotacoesPage() {
           <JaCompreiForm
             isOpen={showJaCompreiForm}
             onClose={() => setShowJaCompreiForm(false)}
-            solicitanteId={user?.userId}
           />
         )}
 

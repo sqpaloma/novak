@@ -11,14 +11,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ProcessedItem } from "@/lib/types";
-import { ResponsavelInfo, getTeamForConsultant, TEAMS_BY_CONSULTANT } from "@/lib/department-utils";
 import { DepartmentSection } from "./department-section";
 
 interface IndividualDepartmentViewProps {
-  responsavel: ResponsavelInfo;
+  responsavel: any;
   totalItens: number;
-  processedItems: ProcessedItem[];
+  processedItems: any[];
   className?: string;
 }
 
@@ -28,9 +26,7 @@ export const IndividualDepartmentView = ({
   processedItems,
   className,
 }: IndividualDepartmentViewProps) => {
-  const teamList = !responsavel.isGerente
-    ? getTeamForConsultant(responsavel.nome)
-    : [];
+  const teamList: any = [];
 
   const renderTeamContent = () => {
     if (responsavel.nome.toLowerCase().includes("consultant1")) {
@@ -49,7 +45,7 @@ export const IndividualDepartmentView = ({
       return (
         <DepartmentSection
           title="Bombas e Motores de Engrenagens"
-          mechanics={TEAMS_BY_CONSULTANT["consultant2-engrenagens"]}
+          mechanics={[]}
           processedItems={processedItems}
           consultantName={responsavel.nome}
           teamList={teamList}
@@ -62,14 +58,14 @@ export const IndividualDepartmentView = ({
         <div className="space-y-4">
           <DepartmentSection
             title="Bomba e Motores de Grande Porte"
-            mechanics={TEAMS_BY_CONSULTANT["consultant3-bomba"]}
+            mechanics={[]}
             processedItems={processedItems}
             consultantName={responsavel.nome}
             teamList={teamList}
           />
           <DepartmentSection
             title="Comandos Hidráulicos de Grande Porte"
-            mechanics={TEAMS_BY_CONSULTANT["consultant3-comandos"]}
+            mechanics={[]}
             processedItems={processedItems}
             consultantName={responsavel.nome}
             teamList={teamList}
@@ -82,7 +78,7 @@ export const IndividualDepartmentView = ({
       return (
         <DepartmentSection
           title="Pessoas Avulsas"
-          mechanics={TEAMS_BY_CONSULTANT["avulsos"]}
+          mechanics={[]}
           processedItems={processedItems}
           consultantName={responsavel.nome}
           teamList={teamList}

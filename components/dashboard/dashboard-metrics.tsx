@@ -3,10 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BarChart3, DollarSign, CheckCircle, Clock, FileText, Users } from "lucide-react";
 import { useState, useEffect } from "react";
-import {
-  useDashboardData,
-  useDashboardItemsByCategory,
-} from "@/lib/convex-dashboard-client";
+
 
 interface DashboardData {
   totalItens: number;
@@ -35,7 +32,7 @@ export function DashboardMetrics({
   overdueItems = [],
 }: DashboardMetricsProps) {
   // Convex hooks
-  const dashData = useDashboardData();
+  const dashData: any = [];
 
   // Estados para as métricas de itens atrasados
   const [itemMetrics, setItemMetrics] = useState<{

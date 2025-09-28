@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +15,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { UserPlus, Eye, EyeOff, Save, X } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
 
 interface CreateUserFormProps {
   onCancel: () => void;
@@ -25,11 +22,9 @@ interface CreateUserFormProps {
 }
 
 export function CreateUserForm({ onCancel, onSuccess }: CreateUserFormProps) {
-  const { user: currentUser } = useAuth();
-  const createUserByAdmin = useMutation(api.auth.createUserByAdmin);
 
   // Buscar departamentos dinamicamente
-  const departments = useQuery(api.departments.listDepartments);
+  const departments: any = [];
 
   const [formData, setFormData] = useState({
     name: "",
@@ -53,10 +48,7 @@ export function CreateUserForm({ onCancel, onSuccess }: CreateUserFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!currentUser) {
-      toast.error("Usuário não autenticado");
-      return;
-    }
+
 
     if (!formData.name || !formData.email || !formData.password) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
@@ -65,38 +57,7 @@ export function CreateUserForm({ onCancel, onSuccess }: CreateUserFormProps) {
 
     setIsLoading(true);
 
-    try {
-      const result = await createUserByAdmin({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        position: formData.position || undefined,
-        department: formData.department || undefined,
-        isAdmin: formData.isAdmin,
-        role: formData.role,
-        createdByUserId: currentUser.userId,
-      });
-
-      toast.success("Usuário criado com sucesso!");
-      onSuccess();
-
-      // Limpar formulário
-      setFormData({
-        name: "",
-        email: "",
-        password: "",
-        position: "",
-        department: "",
-        isAdmin: false,
-        role: "consultor",
-      });
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Erro ao criar usuário"
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    
   };
 
   const handleInputChange = (
@@ -114,7 +75,7 @@ export function CreateUserForm({ onCancel, onSuccess }: CreateUserFormProps) {
     handleInputChange("department", departmentName);
 
     // Buscar o papel padrão para este departamento
-    const selectedDepartment = departments?.find(dept => dept.name === departmentName);
+    const selectedDepartment = departments?.find((dept: any) => dept.name === departmentName);
     if (selectedDepartment) {
       handleInputChange("role", selectedDepartment.defaultRole || "consultor");
     }
@@ -203,7 +164,7 @@ export function CreateUserForm({ onCancel, onSuccess }: CreateUserFormProps) {
                   <SelectValue placeholder="Selecione o departamento" />
                 </SelectTrigger>
                 <SelectContent>
-                  {departments?.map((dept) => (
+                  {departments?.map((dept: any) => (
                     <SelectItem key={dept._id} value={dept.name}>
                       {dept.name}
                     </SelectItem>

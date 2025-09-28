@@ -1,12 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useDashboardData } from "@/lib/convex-dashboard-client";
 import { useActivityStorage } from "./hooks/use-activity-storage";
 import { useActivityData } from "./hooks/use-activity-data";
-import { useAuth } from "@/hooks/use-auth";
-import { useUserPermissions } from "@/hooks/use-user-permissions";
-import { useAdmin } from "@/hooks/use-admin";
 import { CalendarItem } from "./types";
 import { Card, CardContent } from "@/components/ui/card";
 import { ActivityHeader } from "./activity-header";
@@ -132,7 +128,7 @@ export function ActivityPlanner({
   processedItems = [],
   filteredByResponsavel,
 }: ActivityPlannerProps) {
-  const dashboardData = useDashboardData();
+  const dashboardData: any = [];
   const [isLoading, setIsLoading] = useState(false);
   const [databaseItems, setDatabaseItems] = useState<CalendarItem[]>([]);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -145,9 +141,7 @@ export function ActivityPlanner({
     completedActivities
   );
 
-  const { user } = useAuth();
-  const { canSeeAllData, isSpecialUser } = useUserPermissions();
-  const { isAdmin } = useAdmin();
+
 
   // Helper functions
   const parseDate = (dateStr: string): Date | null => {
@@ -156,7 +150,7 @@ export function ActivityPlanner({
     return isNaN(date.getTime()) ? null : date;
   };
 
-  const shouldForceOwn = !canSeeAllData && !isSpecialUser && !isAdmin;
+  const shouldForceOwn = false;
 
   const getDisplayResponsavel = (activity: CalendarItem): string => {
     return activity.responsavel || "";
@@ -234,8 +228,8 @@ export function ActivityPlanner({
           };
         });
 
-      if (shouldForceOwn && user?.name) {
-        const ownFirstName = user.name.split(" ")[0]?.toLowerCase();
+      if (shouldForceOwn) {
+        const ownFirstName = "lucas".split(" ")[0]?.toLowerCase();
         dbItems = dbItems.filter((item) =>
           (item.responsavel || "")
             .toString()
@@ -252,14 +246,8 @@ export function ActivityPlanner({
         );
       }
 
-      if (
-        !shouldForceOwn &&
-        !filteredByResponsavel &&
-        user?.name &&
-        !isSpecialUser &&
-        !isAdmin
-      ) {
-        const ownFirstName = user.name.split(" ")[0]?.toLowerCase();
+      if (!shouldForceOwn && !filteredByResponsavel) {
+        const ownFirstName = "lucas".split(" ")[0]?.toLowerCase();
         dbItems = dbItems.filter((item) =>
           (item.responsavel || "")
             .toString()
@@ -342,9 +330,6 @@ export function ActivityPlanner({
   }, [
     filteredByResponsavel,
     shouldForceOwn,
-    user?.name,
-    user?.email,
-    isAdmin,
     dashboardData,
   ]);
 

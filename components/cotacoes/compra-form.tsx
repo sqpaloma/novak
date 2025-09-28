@@ -9,21 +9,16 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useMutation } from "convex/react";
-import { Id } from "@/convex/_generated/dataModel";
-import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { Loader2, Upload, FileText, X, ShoppingCart, Package } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
+
 
 interface CompraFormProps {
   isOpen: boolean;
-  onClose: () => void;
-  solicitanteId?: string;
+  onClose: () => void;  
 }
 
 type FlowType = "nova_compra" | "ja_comprada" | null;
@@ -39,8 +34,7 @@ interface CompraData {
   observacoes?: string;
 }
 
-export function CompraForm({ isOpen, onClose, solicitanteId }: CompraFormProps) {
-  const { user } = useAuth();
+export function CompraForm({ isOpen, onClose }: CompraFormProps) {
   const [flowType, setFlowType] = useState<FlowType>(null);
   const [compraData, setCompraData] = useState<CompraData>({
     codigo: "",
@@ -56,8 +50,6 @@ export function CompraForm({ isOpen, onClose, solicitanteId }: CompraFormProps) 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const criarCotacao = useMutation(api.cotacoes.criar);
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
 
   const handleFlowSelection = (type: FlowType) => {
     setFlowType(type);
@@ -75,10 +67,7 @@ export function CompraForm({ isOpen, onClose, solicitanteId }: CompraFormProps) 
       return;
     }
 
-    if (!user?.userId) {
-      toast.error("Usuário não identificado");
-      return;
-    }
+
 
     setIsSubmitting(true);
 
@@ -87,7 +76,7 @@ export function CompraForm({ isOpen, onClose, solicitanteId }: CompraFormProps) 
 
       // Se há arquivo, fazer upload
       if (selectedFile) {
-        const uploadUrl = await generateUploadUrl();
+        const uploadUrl = ""; // TODO: Implementar
 
         const result = await fetch(uploadUrl, {
           method: "POST",
@@ -116,21 +105,20 @@ export function CompraForm({ isOpen, onClose, solicitanteId }: CompraFormProps) 
         compraData.observacoes ? compraData.observacoes.trim() : ""
       ].filter(Boolean).join(" | ");
 
-      const result = await criarCotacao({
+      const result = { // TODO: Implementar
         codigo: compraData.codigo.trim(),
         descricao: compraData.descricao.trim(),
         marca: compraData.marca?.trim() || undefined,
         observacoes: observacoesCombinadas || undefined,
-        solicitanteId: user.userId,
-        anexoStorageId: fileStorageId as Id<"_storage">,
+        anexoStorageId: fileStorageId as any,
         anexoNome: selectedFile?.name,
         status: status as any
-      });
+      };
 
       if (flowType === "ja_comprada") {
-        toast.success(`Registro #${result.numeroSequencial} criado com sucesso! Item registrado para acompanhamento.`);
+        toast.success(`Registro #${result.codigo} criado com sucesso! Item registrado para acompanhamento.`);
       } else {
-        toast.success(`Cotação #${result.numeroSequencial} criada com sucesso! O setor de compras será notificado.`);
+        toast.success(`Cotação #${result.codigo} criada com sucesso! O setor de compras será notificado.`);
       }
 
       handleClose();

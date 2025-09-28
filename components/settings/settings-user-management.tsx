@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,10 +17,9 @@ import { CreateUserForm } from "./create-user-form";
 import { UserPlus, Users, Edit, Save, X, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { Id } from "@/convex/_generated/dataModel";
 
 interface EditingUser {
-  _id: Id<"users">;
+  _id: any;
   name: string;
   email: string;
   phone?: string;
@@ -36,12 +33,11 @@ export function SettingsUserManagement() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingUser, setEditingUser] = useState<EditingUser | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [deletingUserId, setDeletingUserId] = useState<Id<"users"> | null>(null);
+  const [deletingUserId, setDeletingUserId] = useState<any | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const users = useQuery(api.users.listUsers);
-  const updateUserProfile = useMutation(api.users.updateUserProfileByAdmin);
-  const deleteUser = useMutation(api.users.deleteUser);
+  const users: any = [];
+
 
   const handleCreateSuccess = () => {
     setShowCreateForm(false);
@@ -69,16 +65,7 @@ export function SettingsUserManagement() {
 
     setIsUpdating(true);
     try {
-      await updateUserProfile({
-        userId: editingUser._id,
-        name: editingUser.name,
-        email: editingUser.email,
-        phone: editingUser.phone || undefined,
-        position: editingUser.position || undefined,
-        department: editingUser.department || undefined,
-        role: editingUser.role || undefined,
-        isAdmin: editingUser.isAdmin,
-      });
+     
 
       toast.success("Usuário atualizado com sucesso!");
       setEditingUser(null);
@@ -97,24 +84,10 @@ export function SettingsUserManagement() {
     });
   };
 
-  const handleDeleteUser = async (userId: Id<"users">) => {
+  const handleDeleteUser = async (userId: any) => {
     setDeletingUserId(userId);
   };
 
-  const confirmDeleteUser = async () => {
-    if (!deletingUserId) return;
-
-    setIsDeleting(true);
-    try {
-      await deleteUser({ userId: deletingUserId });
-      toast.success("Usuário excluído com sucesso!");
-      setDeletingUserId(null);
-    } catch (error) {
-      toast.error("Erro ao excluir usuário");
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   const cancelDeleteUser = () => {
     setDeletingUserId(null);
@@ -189,7 +162,7 @@ export function SettingsUserManagement() {
                   <p className="text-white">Nenhum usuário encontrado.</p>
                 ) : (
                   <div className="space-y-3">
-                    {users?.map((user) => (
+                    {users?.map((user: any) => (
                       <Card key={user._id} className="border border-white/30">
                         <CardContent className="pt-4">
                           {editingUser && editingUser._id === user._id ? (
@@ -393,46 +366,6 @@ export function SettingsUserManagement() {
           )}
         </CardContent>
       </Card>
-
-      {/* Confirmation Dialog */}
-      {deletingUserId && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md mx-4">
-            <CardHeader>
-              <CardTitle className="text-red-600">Confirmar Exclusão</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.</p>
-              <div className="flex justify-end space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={cancelDeleteUser}
-                  disabled={isDeleting}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  onClick={confirmDeleteUser}
-                  disabled={isDeleting}
-                  className="bg-red-600 hover:bg-red-700 text-white"
-                >
-                  {isDeleting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      Excluindo...
-                    </>
-                  ) : (
-                    <>
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Excluir
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }

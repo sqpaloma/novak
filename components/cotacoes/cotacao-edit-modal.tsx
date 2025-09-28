@@ -13,15 +13,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Edit, Save, X } from "lucide-react";
 import { useCotacao, useCotacoes } from "@/hooks/use-cotacoes";
-import { Id } from "@/convex/_generated/dataModel";
-import { CotacaoItem } from "@/lib/types";
 
 interface CotacaoEditModalProps {
-  cotacaoId: Id<"cotacoes">;
+  cotacaoId: any;
   isOpen: boolean;
   onClose: () => void;
   userRole: string;
-  userId?: Id<"users">;
+  userId?: any;
   onSave?: () => void;
 }
 
@@ -44,7 +42,7 @@ export function CotacaoEditModal({
     cliente: "",
     observacoes: "",
   });
-  const [itens, setItens] = useState<CotacaoItem[]>([]);
+  const [itens, setItens] = useState<any[]>([]);
 
   useEffect(() => {
     if (cotacao) {
@@ -89,8 +87,8 @@ export function CotacaoEditModal({
     setIsSaving(true);
     try {
       // Preparar itens para edição
-      const itensParaEdicao = itens.map(item => ({
-        itemId: item._id as Id<"cotacaoItens"> | undefined,
+      const itensParaEdicao = itens.map((item: any) => ({
+        itemId: item._id as any,
         codigoPeca: item.codigoPeca,
         descricao: item.descricao,
         quantidade: item.quantidade,
@@ -181,7 +179,7 @@ export function CotacaoEditModal({
           <div className="p-4 bg-blue-600/70 border border-white/30 rounded-lg">
             <h3 className="font-semibold text-white mb-3">Itens ({itens.length})</h3>
             <div className="space-y-3">
-              {itens.map((item, index) => (
+              {itens.map((item: any, index: number  ) => (
                 <div key={item._id} className="border border-blue-600 p-4 rounded-lg bg-blue-800/20">
                   <div className="grid grid-cols-3 gap-4">
                     <div>

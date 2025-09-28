@@ -7,9 +7,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ProcessedItem } from "@/lib/types";
-import { TEAMS_BY_CONSULTANT } from "@/lib/department-utils";
-import { computeDepartmentTotals } from "@/lib/calculation-utils";
 import { DepartmentSection } from "./department-section";
 
 interface DepartmentItemProps {
@@ -17,31 +14,23 @@ interface DepartmentItemProps {
   style: React.CSSProperties;
   data: {
     departments: any[];
-    processedItems: ProcessedItem[];
-    getTeamForConsultant: (name: string) => string[];
+    processedItems: any[];
   };
 }
 
 export const DepartmentItem = ({ index, style, data }: DepartmentItemProps) => {
-  const { departments, processedItems, getTeamForConsultant } = data;
+  const { departments, processedItems } = data;
   const dep = departments[index];
-  const team = getTeamForConsultant(dep.responsavel);
-
-  const depTotals = computeDepartmentTotals(
-    processedItems,
-    dep.responsavel,
-    team
-  );
 
   const renderDepartmentContent = () => {
     if (dep.responsavel.toLowerCase().includes("consultant1")) {
       return (
         <DepartmentSection
           title="Pistões"
-          mechanics={TEAMS_BY_CONSULTANT["consultant1-pistoes"]}
+          mechanics={[]}
           processedItems={processedItems}
           consultantName={dep.responsavel}
-          teamList={team}
+          teamList={[]}
         />
       );
     }
@@ -50,10 +39,10 @@ export const DepartmentItem = ({ index, style, data }: DepartmentItemProps) => {
       return (
         <DepartmentSection
           title="Bombas e Motores de Engrenagens"
-          mechanics={TEAMS_BY_CONSULTANT["consultant2-engrenagens"]}
+          mechanics={[]}
           processedItems={processedItems}
           consultantName={dep.responsavel}
-          teamList={team}
+          teamList={[]}
         />
       );
     }
@@ -63,17 +52,17 @@ export const DepartmentItem = ({ index, style, data }: DepartmentItemProps) => {
         <div className="space-y-4">
           <DepartmentSection
             title="Bomba e Motores de Grande Porte"
-            mechanics={TEAMS_BY_CONSULTANT["consultant3-bomba"]}
+            mechanics={[]}
             processedItems={processedItems}
             consultantName={dep.responsavel}
-            teamList={team}
+            teamList={[]}
           />
           <DepartmentSection
             title="Comandos Hidráulicos de Grande Porte"
-            mechanics={TEAMS_BY_CONSULTANT["consultant3-comandos"]}
+            mechanics={[]}
             processedItems={processedItems}
             consultantName={dep.responsavel}
-            teamList={team}
+            teamList={[]}
           />
         </div>
       );
@@ -83,10 +72,10 @@ export const DepartmentItem = ({ index, style, data }: DepartmentItemProps) => {
       return (
         <DepartmentSection
           title="Pessoas Avulsas"
-          mechanics={TEAMS_BY_CONSULTANT["avulsos"]}
+          mechanics={[]}
           processedItems={processedItems}
           consultantName={dep.responsavel}
-          teamList={team}
+          teamList={[]}
         />
       );
     }
@@ -94,10 +83,10 @@ export const DepartmentItem = ({ index, style, data }: DepartmentItemProps) => {
     return (
       <DepartmentSection
         title="Mecânicos do time"
-        mechanics={team}
+        mechanics={[]}
         processedItems={processedItems}
         consultantName={dep.responsavel}
-        teamList={team}
+        teamList={[]}
       />
     );
   };
@@ -127,7 +116,7 @@ export const DepartmentItem = ({ index, style, data }: DepartmentItemProps) => {
             </div>
           </div>
         </AccordionTrigger>
-        {team.length > 0 && (
+        {dep.totalItens > 0 && (
           <AccordionContent>
             <div className="px-3">
               {renderDepartmentContent()}

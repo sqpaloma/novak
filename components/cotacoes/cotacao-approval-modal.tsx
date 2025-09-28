@@ -23,19 +23,18 @@ import {
 } from "@/components/ui/table";
 import { Loader2, ShoppingCart, X, Plus, Minus } from "lucide-react";
 import { useCotacao, useCotacoes } from "@/hooks/use-cotacoes";
-import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
 
 interface CotacaoApprovalModalProps {
-  cotacaoId: Id<"cotacoes">;
+  cotacaoId: any;
   isOpen: boolean;
   onClose: () => void;
   userRole: string;
-  userId?: Id<"users">;
+  userId?: any;
 }
 
 interface ItemToApprove {
-  itemId: Id<"cotacaoItens">;
+  itemId: any;
   codigoPeca: string;
   descricao: string;
   quantidade: number;
@@ -94,14 +93,14 @@ export function CotacaoApprovalModal({
   };
 
   // Atualizar seleção de item
-  const handleItemSelection = (itemId: Id<"cotacaoItens">, selected: boolean) => {
+  const handleItemSelection = (itemId: any, selected: boolean) => {
     setItensToApprove(prev => prev.map(item => 
       item.itemId === itemId ? { ...item, selected } : item
     ));
   };
 
   // Atualizar quantidade aprovada
-  const handleQuantityChange = (itemId: Id<"cotacaoItens">, novaQuantidade: number) => {
+  const handleQuantityChange = (itemId: any, novaQuantidade: number) => {
     setItensToApprove(prev => prev.map(item => {
       if (item.itemId === itemId) {
         const quantidade = Math.max(0, Math.min(novaQuantidade, item.quantidade));
@@ -116,7 +115,7 @@ export function CotacaoApprovalModal({
   };
 
   // Incrementar/decrementar quantidade
-  const adjustQuantity = (itemId: Id<"cotacaoItens">, delta: number) => {
+  const adjustQuantity = (itemId: any, delta: number) => {
     const item = itensToApprove.find(i => i.itemId === itemId);
     if (item) {
       const newQuantity = Math.max(0, Math.min(item.quantidadeAprovada + delta, item.quantidade));

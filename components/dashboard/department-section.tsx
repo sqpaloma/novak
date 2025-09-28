@@ -3,16 +3,14 @@
 import React from "react";
 import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { ProcessedItem } from "@/lib/types";
-import { formatPersonName } from "@/lib/department-utils";
-import { computeMechanicCounts, computeDepartmentTotals } from "@/lib/calculation-utils";
+
 
 interface MechanicItemProps {
   index: number;
   style: React.CSSProperties;
   data: {
     mechanics: string[];
-    processedItems: ProcessedItem[];
+      processedItems: any[];
     consultantName: string;
     teamList: string[];
   };
@@ -24,17 +22,17 @@ const MechanicItem = ({ index, style, data }: MechanicItemProps) => {
   if (!m) return null;
 
   const mechanicUpper = m.toUpperCase();
-  const counts = computeMechanicCounts(
-    processedItems,
-    consultantName,
-    mechanicUpper,
-    teamList
-  );
+  const counts = {
+    execCount: 0,
+    overdueCount: 0,
+  }
+
+
 
   return (
     <div style={style}>
       <li className="text-sm text-gray-700 flex items-center justify-between px-1">
-        <span>{formatPersonName(m)}</span>
+        <span>{m}</span>
         <span className="text-xs">
           <span className="text-gray-700 font-medium mr-2">
             {counts.execCount}
@@ -51,7 +49,7 @@ const MechanicItem = ({ index, style, data }: MechanicItemProps) => {
 interface DepartmentSectionProps {
   title: string;
   mechanics: string[];
-  processedItems: ProcessedItem[];
+  processedItems: any[];
   consultantName: string;
   teamList: string[];
 }
@@ -70,11 +68,9 @@ export const DepartmentSection = ({
     teamList,
   };
 
-  const departmentTotals = computeDepartmentTotals(
-    processedItems,
-    consultantName,
-    mechanics
-  );
+
+
+
 
   return (
     <div>
@@ -82,10 +78,10 @@ export const DepartmentSection = ({
         <p className="text-xs text-gray-600 font-medium">{title}</p>
         <div className="flex items-center gap-2 text-xs">
           <span className="text-gray-700 font-medium">
-            {departmentTotals.totalExecCount}
+            {0}
           </span>
           <span className="text-red-600 font-semibold">
-            {departmentTotals.totalOverdueCount}
+            {0}
           </span>
         </div>
       </div>
@@ -109,18 +105,18 @@ export const DepartmentSection = ({
         ) : (
           (mechanics || []).map((m) => {
             const mechanicUpper = m.toUpperCase();
-            const counts = computeMechanicCounts(
-              processedItems,
-              consultantName,
-              mechanicUpper,
-              teamList
-            );
+            const counts = {
+              execCount: 0,
+              overdueCount: 0,
+            }
+
+
             return (
               <li
                 key={m}
                 className="text-sm text-gray-700 flex items-center justify-between"
               >
-                <span>{formatPersonName(m)}</span>
+                <span>{m}</span>
                 <span className="text-xs">
                   <span className="text-gray-700 font-medium mr-2">
                     {counts.execCount}

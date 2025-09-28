@@ -1,18 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building, FileText, Clock, CheckCircle, LogOut, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Id } from "@/convex/_generated/dataModel";
 import Image from "next/image";
 
 interface FornecedorData {
-  id: Id<"fornecedores">;
+  id: any;
   nomeEmpresa: string;
   loginUsuario: string;
 }
@@ -39,16 +36,13 @@ export default function FornecedorCotacoesPage() {
   }, [router]);
 
   // Buscar cotações do fornecedor
-  const cotacoes = useQuery(
-    api.fornecedores.getCotacoesFornecedor,
-    fornecedorData ? { fornecedorId: fornecedorData.id } : "skip"
-  );
+  const cotacoes: any = [];
 
   // Debug: verificar quando os dados mudam
   useEffect(() => {
     if (cotacoes) {
       console.log("Cotações carregadas:", cotacoes);
-      console.log("Status das cotações:", cotacoes.map(c => ({ id: c._id, numero: c.numeroSequencial, status: c.status })));
+      console.log("Status das cotações:", cotacoes.map((c: any) => ({ id: c._id, numero: c.numeroSequencial, status: c.status })));
     }
   }, [cotacoes]);
 
@@ -110,9 +104,9 @@ export default function FornecedorCotacoesPage() {
 
   // Estatísticas das cotações
   const totalCotacoes = cotacoes?.length || 0;
-  const cotacoesPendentes = cotacoes?.filter(c => ["novo", "em_cotacao"].includes(c.status)).length || 0;
-  const cotacoesRespondidas = cotacoes?.filter(c => c.status === "respondida").length || 0;
-  const cotacoesConcluidas = cotacoes?.filter(c => ["comprada"].includes(c.status)).length || 0;
+  const cotacoesPendentes = cotacoes?.filter((c: any) => ["novo", "em_cotacao"].includes(c.status)).length || 0;
+  const cotacoesRespondidas = cotacoes?.filter((c: any) => c.status === "respondida").length || 0;
+  const cotacoesConcluidas = cotacoes?.filter((c: any) => ["comprada"].includes(c.status)).length || 0;
 
   // Separar cotações para exibição baseado no filtro selecionado
   const getCotacoesParaExibir = () => {
@@ -120,16 +114,16 @@ export default function FornecedorCotacoesPage() {
 
     // Sempre filtrar por pendentes por padrão, independente do filtroStatus
     if (filtroStatus === "pendentes") {
-      return cotacoes.filter(c => ["novo", "em_cotacao"].includes(c.status));
+      return cotacoes.filter((c: any) => ["novo", "em_cotacao"].includes(c.status));
     } else if (filtroStatus === "respondidas") {
-      return cotacoes.filter(c => c.status === "respondida");
+      return cotacoes.filter((c: any) => c.status === "respondida");
     } else if (filtroStatus === "finalizadas") {
-      return cotacoes.filter(c => ["comprada"].includes(c.status));
+      return cotacoes.filter((c: any) => ["comprada"].includes(c.status));
     } else if (filtroStatus === "todas") {
       return cotacoes;
     } else {
       // Fallback para pendentes
-      return cotacoes.filter(c => ["novo", "em_cotacao"].includes(c.status));
+      return cotacoes.filter((c: any) => ["novo", "em_cotacao"].includes(c.status));
     }
   };
 
@@ -280,7 +274,7 @@ export default function FornecedorCotacoesPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {cotacoesParaExibir.map((cotacao) => (
+                {cotacoesParaExibir.map((cotacao: any) => (
                   <Card key={cotacao._id} className={`bg-white/5 border-white/10 border-l-4 ${getPriorityColor(cotacao.status)} hover:bg-white/10 transition-colors`}>
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-4">

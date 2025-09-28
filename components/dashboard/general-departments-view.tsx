@@ -6,17 +6,11 @@ import { Building, User } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { FixedSizeList as List } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
-import { ProcessedItem } from "@/lib/types";
-import { TEAMS_BY_CONSULTANT, getTeamForConsultant } from "@/lib/department-utils";
-import { computeDepartmentTotals } from "@/lib/calculation-utils";
 import { DepartmentSection } from "./department-section";
-import { DepartmentItem } from "./department-item";
 
 interface GeneralDepartmentsViewProps {
   statsPorDepartamento: any[];
-  processedItems: ProcessedItem[];
+  processedItems: any[];
   className?: string;
 }
 
@@ -32,7 +26,6 @@ export const GeneralDepartmentsView = ({
   const departmentData = {
     departments: filteredDepartments,
     processedItems,
-    getTeamForConsultant,
   };
 
   const renderDepartmentContent = (dep: any, team: string[]) => {
@@ -40,7 +33,7 @@ export const GeneralDepartmentsView = ({
       return (
         <DepartmentSection
           title="Pistões"
-          mechanics={TEAMS_BY_CONSULTANT["consultant1-pistoes"]}
+          mechanics={[]}
           processedItems={processedItems}
           consultantName={dep.responsavel}
           teamList={team}
@@ -52,7 +45,7 @@ export const GeneralDepartmentsView = ({
       return (
         <DepartmentSection
           title="Bombas e Motores de Engrenagens"
-          mechanics={TEAMS_BY_CONSULTANT["consultant2-engrenagens"]}
+          mechanics={[]}
           processedItems={processedItems}
           consultantName={dep.responsavel}
           teamList={team}
@@ -65,14 +58,14 @@ export const GeneralDepartmentsView = ({
         <div className="space-y-4">
           <DepartmentSection
             title="Bomba e Motores de Grande Porte"
-            mechanics={TEAMS_BY_CONSULTANT["consultant3-bomba"]}
+            mechanics={[]}
             processedItems={processedItems}
             consultantName={dep.responsavel}
             teamList={team}
           />
           <DepartmentSection
             title="Comandos Hidráulicos de Grande Porte"
-            mechanics={TEAMS_BY_CONSULTANT["consultant3-comandos"]}
+            mechanics={[]}
             processedItems={processedItems}
             consultantName={dep.responsavel}
             teamList={team}
@@ -85,7 +78,7 @@ export const GeneralDepartmentsView = ({
       return (
         <DepartmentSection
           title="Pessoas Avulsas"
-          mechanics={TEAMS_BY_CONSULTANT["avulsos"]}
+          mechanics={[]}
           processedItems={processedItems}
           consultantName={dep.responsavel}
           teamList={team}

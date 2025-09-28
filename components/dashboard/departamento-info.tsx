@@ -1,24 +1,18 @@
 "use client";
 
 import React from "react";
-import { DepartamentoInfoProps } from "@/lib/department-types";
-import { getDepartamentoStats } from "@/lib/department-data-processor";
 import { IndividualDepartmentView } from "./individual-department-view";
 import { GeneralDepartmentsView } from "./general-departments-view";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useDashboardData } from "@/lib/convex-dashboard-client";
 
 export function DepartamentoInfo({
   processedItems,
-  filteredByResponsavel,
   className,
-}: DepartamentoInfoProps) {
+}: any) {
   // Busca consultores e suas equipes
-  const consultorsWithTeams = useQuery(api.departments.getConsultorsWithTeams);
+  const consultorsWithTeams: any = [];
   
   // Busca dados do dashboard para aplicar mapeamento de consultor
-  const dashboardData = useDashboardData();
+  const dashboardData: any = [];
 
   // Função para mapear responsável para consultor
   const mapResponsavelToConsultor = (responsavel: string): string => {
@@ -63,7 +57,7 @@ export function DepartamentoInfo({
     });
 
     // Aplica o mapeamento aos processedItems
-    return processedItems.map(item => {
+    return processedItems.map((item: any) => {
       const dashboardItem = dashboardItemsMap.get(item.os || item.id);
       if (dashboardItem) {
         return {
@@ -76,22 +70,18 @@ export function DepartamentoInfo({
   }, [processedItems, dashboardData]);
 
   // Converte para o formato esperado pelas funções
-  const registeredUsers = consultorsWithTeams?.map(team => ({
-    name: team.consultor.name
-  }));
+  const registeredUsers: any = [];
 
-  const stats = getDepartamentoStats(
-    processedItemsWithConsultor,
-    filteredByResponsavel,
-    registeredUsers,
-    consultorsWithTeams
-  );
+
+  const stats = {
+    statsPorDepartamento: [],
+  }
 
   if (!stats) return null;
 
   // Individual responsavel view
   if ("responsavel" in stats) {
-    const { responsavel, totalItens } = stats;
+    const { responsavel, totalItens } = stats as any;
 
     return (
       <IndividualDepartmentView

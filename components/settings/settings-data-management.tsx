@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Upload,
   Save,
@@ -15,36 +14,16 @@ import {
   Database,
   Users,
 } from "lucide-react";
-import { useDashboardData } from "@/hooks/use-dashboard-data";
 
 export function SettingsDataManagement() {
-  const {
-    dashboardData,
-    fileName,
-    uploadHistory,
-    isLoading,
-    saveStatus,
-    loadSavedData,
-    loadUploadHistory,
-    handleFileUpload,
-    handleSaveData,
-    handleClearData,
-  } = useDashboardData();
-
-
+  
   const fileInputRefConsultores = useRef<HTMLInputElement>(null);
 
   const [historyDropdownOpen, setHistoryDropdownOpen] = useState({
     consultores: false,
   });
 
-  useEffect(() => {
-    loadSavedData();
-    loadUploadHistory();
-  }, [
-    loadSavedData,
-    loadUploadHistory,
-  ]);
+
 
   const handleUploadClick = (type: "consultores") => {
     if (type === "consultores") {
@@ -111,16 +90,16 @@ export function SettingsDataManagement() {
                 ref={fileInputRefConsultores}
                 type="file"
                 accept=".xlsx,.xls"
-                onChange={handleFileUpload}
+                // onChange={handleFileUpload}
                 className="hidden"
               />
 
-              {fileName && (
+              {/* {fileName && ( */}
                 <div className="flex items-center space-x-2 text-white/80 text-sm bg-white/5 p-2 rounded">
                   <FileSpreadsheet className="h-4 w-4" />
-                  <span>Arquivo atual: {fileName}</span>
+                  {/* <span>Arquivo atual: {fileName}</span> */}
                 </div>
-              )}
+              {/* )} */}
 
               <p className="text-sm text-gray-300">
                 Faça upload de uma planilha Excel (.xlsx ou .xls) para atualizar
@@ -139,25 +118,25 @@ export function SettingsDataManagement() {
                 <div className="bg-white/5 p-3 rounded">
                   <div className="text-xs text-gray-300">Total</div>
                   <div className="text-lg font-semibold text-white">
-                    {dashboardData.totalItens}
+                    {/* {dashboardData.totalItens} */}
                   </div>
                 </div>
                 <div className="bg-white/5 p-3 rounded">
                   <div className="text-xs text-gray-300">Aguardando</div>
                   <div className="text-lg font-semibold text-white">
-                    {dashboardData.aguardandoAprovacao}
+                    {/* {dashboardData.aguardandoAprovacao} */}
                   </div>
                 </div>
                 <div className="bg-white/5 p-3 rounded">
                   <div className="text-xs text-gray-300">Análises</div>
                   <div className="text-lg font-semibold text-white">
-                    {dashboardData.analises}
+                    {/* {dashboardData.analises} */}
                   </div>
                 </div>
                 <div className="bg-white/5 p-3 rounded">
                   <div className="text-xs text-gray-300">Em Execução</div>
                   <div className="text-lg font-semibold text-white">
-                    {dashboardData.emExecucao}
+                    {/* {dashboardData.emExecucao} */}
                   </div>
                 </div>
               </div>
@@ -170,19 +149,19 @@ export function SettingsDataManagement() {
               <Label className="text-white text-base font-medium">Ações</Label>
               <div className="flex flex-wrap gap-4">
                 <Button
-                  onClick={handleSaveData}
-                  disabled={
-                    dashboardData.totalItens === 0 || saveStatus === "saving"
-                  }
+                  // onClick={handleSaveData}
+                  // disabled={
+                  //   // dashboardData.totalItens === 0 || saveStatus === "saving"
+                  // }
                   className="bg-green-600 hover:bg-green-700 text-white"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  {getSaveButtonText(saveStatus)}
+                  {/* {getSaveButtonText(saveStatus)} */}
                 </Button>
 
                 <Button
-                  onClick={handleClearData}
-                  disabled={isLoading}
+                  // onClick={handleClearData}
+                  // disabled={isLoading}
                   variant="destructive"
                   className="bg-red-600 hover:bg-red-700"
                 >
@@ -215,37 +194,37 @@ export function SettingsDataManagement() {
                 </Button>
               </div>
 
-              {historyDropdownOpen.consultores && uploadHistory.length > 0 && (
+              {/* {historyDropdownOpen.consultores && uploadHistory.length > 0 && ( */}
                 <div className="bg-white/5 border border-white/20 rounded-md p-4 max-h-60 overflow-auto">
                   <div className="space-y-3">
-                    {uploadHistory.map((upload) => (
+                    {/* {uploadHistory.map((upload: any) => ( */}
                       <div
-                        key={upload._id || upload.fileName || upload.uploadDate}
+                        // key={upload._id || upload.fileName || upload.uploadDate}
                         className="p-3 bg-white/5 rounded border-l-4 border-l-blue-500"
                       >
                         <div className="font-medium text-sm text-white">
-                          {upload.fileName}
+                          {/* {upload.fileName} */}
                         </div>
                         <div className="text-xs text-gray-300">
-                          {upload.uploadedBy} • {upload.totalRecords}{" "}
+                          {/* {upload.uploadedBy} • {upload.totalRecords}{" "} */}
                           registros
                         </div>
                         <div className="text-xs text-gray-400">
-                          {new Date(upload.uploadDate || "").toLocaleString(
+                          {/* {new Date(upload.uploadDate || "").toLocaleString(
                             "pt-BR"
-                          )}
+                          )} */}
                         </div>
                       </div>
-                    ))}
+                    {/* ))} */}
                   </div>
                 </div>
-              )}
+              {/* )} */}
 
-              {uploadHistory.length === 0 && (
+              {/* {uploadHistory.length === 0 && ( */}
                 <p className="text-sm text-gray-400">
                   Nenhum upload realizado ainda.
                 </p>
-              )}
+              {/* )} */}
             </div>
           </div>
         </div>
